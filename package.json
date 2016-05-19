@@ -1,0 +1,22 @@
+{
+  "name": "holabot",
+  "version": "0.0.0",
+  "description": "",
+  "main": "src/holabot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hokkaido/holabot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hokkaido/holabot/issues"
+  },
+  "homepage": "https://github.com/hokkaido/holabot#readme",
+  "dependencies": {
+    "botkit": "^0.1.1"
+  }
+}
