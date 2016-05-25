@@ -4,20 +4,19 @@ const moment = require('moment');
 
 const apiUrl = 'https://app.holaspirit.com/api';
 
+const makeEndpoint = (name) => {
+  return {
+    all: (orgId) => `${apiUrl}/organizations/${orgId}/${name}`,
+    get: (orgId, id) => `${apiUrl}/organizations/${orgId}/${name}/${id}`,
+  }
+}
+
 const endpoints = {
   oauth: {
     token: 'https://app.holaspirit.com/oauth/v2/token'
   },
   organizations: {
-    all: `${apiUrl}/organizations`,
     get: (id) => `${apiUrl}/organizations/${id}`,
-    members: (id) => `${apiUrl}/organizations/${id}/members`,
-  },
-  circles: {
-    all: (id) => `${apiUrl}/organizations/${id}/circles`
-  },
-  members: {
-    all: (id) => `${apiUrl}/organizations/${id}/members`
   },
   me: `${apiUrl}/me`,
 }
@@ -34,17 +33,43 @@ class Token {
   }
 }
 
+class Resource {
+  constructor(api, name) {
+    this._api = api;
+    this._endpoints = makeEndpoint(name);
+    console.log(this._endpoints);
+  }
+
+  all() {
+    return this._api.get(this._endpoints.all(this._api._orgId));
+  }
+
+  get(id) {
+    return this._api.get(this._endpoints.get(this._api._orgId, id));
+  }
+}
+
 /**
- * api.organization(2).circles(30);
+ * api.circles(30);
  */
 class HolaClient {
   constructor(opts) {
     this._clientId = opts.clientId;
     this._secret = opts.secret;
+    this._username = opts.username;
+    this._password = opts.password;
+    this._orgId = opts.organization;
     this._token = undefined;
-    this.organization = new Organization(this);
-    this.me = new Me(this);
 
+    this.me = new Me(this);
+    this.actions = new Resource(this, 'actions');
+    this.circles = new Resource(this, 'circles');
+    this.gogs = new Resource(this, 'gogs');
+    this.members = new Resource(this, 'members');
+    this.projects = new Resource(this, 'projects');
+    this.roles = new Resource(this, 'roles');
+    this.tensions = new Resource(this, 'tensions');
+    this.users = new Resource(this, 'users');
   }
 
   _auth() {
@@ -54,7 +79,9 @@ class HolaClient {
       qs: {
         client_id: this._clientId,
         client_secret: this._secret,
-        grant_type: 'client_credentials'
+        username: this._username,
+        password: this._password,
+        grant_type: 'password'
       },
       json: true
     };
@@ -84,23 +111,6 @@ class HolaClient {
   }
 }
 
-class Circle {
-  constructor(api) {
-
-  }
-  checklists() {
-
-  }
-
-  metrics() {
-
-  }
-
-  publications() {
-
-  }
-}
-
 class Me {
   constructor(api) {
     this._api = api;
@@ -109,24 +119,6 @@ class Me {
   get() {
     return this._api.get(endpoints.me);
   }
-
-
-}
-
-class Organization {
-  constructor(api) {
-    this._endpoints = {
-      get: apiUrl + `organizations/{$id}`,
-      all: apiUrl + `{apiUrlorganizations/{$id}`,
-    }
-    this._api = api;
-  }
-
-  members(id) {
-    return this._api.get(endpoints.organizations.members(id));
-  }
-
-
 }
 
 module.exports = {

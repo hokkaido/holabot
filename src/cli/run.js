@@ -7,7 +7,7 @@ const url = require('url');
 const chalk = require('chalk');
 const winston = require('winston');
 
-const server = require('./server');
+const server = require('../server');
 
 const defaultConfigFile = '.hb/config.toml';
 

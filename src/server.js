@@ -16,12 +16,29 @@ class Server {
 
     this.hola = new HolaClient(opts.holaspirit);
 
-    this.hola.me.get();
-
     this.ready().then(() => {
       //this.initBot(opts);
+      this.initHola();
     });
 
+  }
+
+  initHola() {
+    this.hola.members.all().then((res) => {
+      if (res.data) {
+        r.table('hola_members').insert(res.data).run(this._db.connection());
+      }
+
+      if (res.linked && res.linked.users) {
+        r.table('hola_users').insert(res.linked.users).run(this._db.connection());
+      }
+    });
+
+    this.hola.circles.all().then((res) => {
+      if (res.data) {
+        r.table('hola_circles').insert(res.data).run(this._db.connection());
+      }
+    });
   }
 
   initBot(opts) {

@@ -3,7 +3,7 @@ const server = require('./server');
 const toml = require('toml');
 const chalk = require('chalk');
 
-const runCommand = require('./run');
+const runCommand = require('./cli/run');
 
 
 const parser = new argparse.ArgumentParser();
